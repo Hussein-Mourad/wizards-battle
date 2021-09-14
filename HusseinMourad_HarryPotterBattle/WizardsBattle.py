@@ -59,7 +59,7 @@ class WizardsBattle:
                 continue
 
             # Gets the difference between the two spells
-            health_decrease = abs(harry_spell.get_power() - voldmort_spell.get_power())
+            power_difference = abs(harry_spell.get_power() - voldmort_spell.get_power())
 
             # when the player uses a shield
             if self._harry.has_shields() and (
@@ -67,18 +67,18 @@ class WizardsBattle:
                 # Decreases the number of shields
                 self._harry.use_shield()
                 # Sets the difference to zero so the health won't be affected
-                health_decrease = 0
+                power_difference = 0
 
             if self._voldmort.has_shields() and (
                     voldmort_spell.get_name() == "sheild" or voldmort_spell.get_name() == "shield"):
                 self._voldmort.use_shield()
-                health_decrease = 0
+                power_difference = 0
 
-            # Decreases the health of the player according to the casted spell
+            # Decreases the health of the player that used a weaker spell
             if harry_spell.get_power() > voldmort_spell.get_power():
-                self._voldmort.decrease_health(health_decrease)
+                self._voldmort.decrease_health(power_difference)
             elif voldmort_spell.get_power() > harry_spell.get_power():
-                self._harry.decrease_health(health_decrease)
+                self._harry.decrease_health(power_difference)
 
             # Decreases the energy of the casted spell
             self._harry.decrease_energy(harry_spell.get_power())
@@ -90,7 +90,6 @@ class WizardsBattle:
             # Prints out the results to console
             self._print_result()
 
-            game_round += 1
             if self._is_winner():
                 game_on = False
                 # Announce the winner
@@ -100,6 +99,8 @@ class WizardsBattle:
                 # Write output to xml file
                 with open("output.xml", "wb") as f:
                     f.write(eT.tostring(self._xml_root))
+            else:
+                game_round += 1
 
     # Reads the spells from the file and adds them to the player spells
     def _load_spells(self):
